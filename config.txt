@@ -1,0 +1,28 @@
+#config file
+#format is $SAMPLE_PATH $SAMPLE_TYPE
+#sample_type = {bkg, dat, sig}
+/nfs/dust/cms/user/sahin/ThePlotting/data/T2tb-mStop200mLSP25.root sig
+/nfs/dust/cms/user/sahin/ThePlotting/data/T2tb-mStop325mLSP100.root sig
+/nfs/dust/cms/user/sahin/ThePlotting/data/Data.root dat
+/nfs/dust/cms/user/sahin/ThePlotting/data/QCD.root bkg
+/nfs/dust/cms/user/sahin/ThePlotting/data/DiLep.root bkg
+/nfs/dust/cms/user/sahin/ThePlotting/data/Rare.root bkg
+/nfs/dust/cms/user/sahin/ThePlotting/data/WJets.root bkg
+/nfs/dust/cms/user/sahin/ThePlotting/data/OneLep.root bkg
+/nfs/dust/cms/user/sahin/ThePlotting/data/DrellYan.root bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/TTbar/2500-100000/out_TTbar_2500-100000_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/TTbar/1700-2500/out_TTbar_1700-2500_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/TTbar/1100-1700/out_TTbar_1100-1700_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/TTbar/600-1100/out_TTbar_600-1100_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/TTbar/0-600/out_TTbar_0-600_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/t2t_900_100_50Pu_out.root ControlPlots sig
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/ttbar_50Pu_out.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/TTbar_ALL.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets_ALL.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets/3700-100000/out_BosonJets_3700-100000_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets/2700-3700/out_BosonJets_2700-3700_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets/1800-2700/out_BosonJets_1800-2700_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets/1100-1800/out_BosonJets_1100-1800_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets/600-1100/out_BosonJets_600-1100_STOP_noTail_0.root ControlPlots bkg
+#/nfs/dust/cms/user/sahin/DesySusy/stop_2015/BosonJets/300-600/out_BosonJets_300-600_STOP_noTail_0.root ControlPlots bkg
+#dont know what is going on
