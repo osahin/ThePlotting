@@ -33,7 +33,7 @@ ifndef ROOTSYS
 $(error ROOTSYS is not defined!)
 endif
 
-ROOTLIBS = `root-config --libs` -lGenVector -lMathMore -lMinuit2
+ROOTLIBS = `root-config --libs` -lGenVector -lMathCore -lMinuit2 
 CXX = g++ -g3 -O1
 CXXFLAGS = `root-config --cflags`
 LD = g++
@@ -47,7 +47,7 @@ all: ${TestExample}
 
 test/example.exe: test/example.cpp ${OBJS}
 	@echo $(SOURCES)
-	$(LD) $(LDFLAGS) -I $(INCDIR) $(MOREINCS) $(ROOTLIBS) $(MORELIBS) -o $@ $< $(addprefix $(BINDIR)/,$(OBJS))
+	$(CXX) $(CXXFLAGS) -I $(INCDIR) $(MOREINCS) $(ROOTLIBS) $(MORELIBS) -o $@ $< $(addprefix $(BINDIR)/,$(OBJS))
 	@echo "$@ done"
 
 install: bindir
