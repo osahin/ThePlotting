@@ -2,7 +2,6 @@
 Please see Histo.h file for the class definition
 Author:OS
 */
-
 #include "Histo.h"
 #include <TString.h>
 #include <TH1D.h>
@@ -10,7 +9,6 @@ Author:OS
 #include <TFile.h>
 #include <iostream>
 #include <cstdlib>
-
 using namespace std;
 //simple method that sets the integral for the given value to Hist container 
 void plotting::Histo::Set_integral(Hist* hist_it,int min, int max)  {
@@ -29,38 +27,33 @@ void plotting::Histo::fill_hist (Histo_t* sample_type, TString* file_path, TStri
   sample_name->Remove(sample_name->First('.'),sample_name->Length()-1);
   cout <<" sample name: " <<*sample_name ;
   if(sub_dir) cout << "    sub dir: " << *sub_dir;
-    cout << endl;
+  cout << endl;
   TFile *File = new TFile(*file_path,"READ");
-  if ( File->IsZombie() ) 
-    {
-      cout << "File in path \n"<< *file_path << "could not opened successfully\n";
-      exit(1);
+  if ( File->IsZombie() ) {
+    cout << "File in path \n"<< *file_path << "could not opened successfully\n";
+    exit(1);
     } 
-
   Loop_histos((TDirectory*) File,sample_type,dirName,sub_dir);
   File->Close();
 }
 //loop over the histograms and fill the container.
 void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TString>& dirName, TString* sub_dir, int dir_depth,  TString dName, TString mName){ //pass pointer later
-  if (sub_dir){if(!gDirectory->cd((TString)dir->GetPath()+*sub_dir)) cout << " Could not open the subdir... Continue... " << endl;  
-    dir=gDirectory;}
-  cout << "the dir path " << dir->GetPath() << "  the gDirectory: " << gDirectory->GetPath() <<endl  ;
+  if (sub_dir){
+    if(!gDirectory->cd((TString)dir->GetPath()+*sub_dir)) cout << " Could not open the subdir... Continue... " << endl;  
+    dir=gDirectory;
+  }
+  //  cout << "the dir path " << dir->GetPath() << "  the gDirectory: " << gDirectory->GetPath() <<endl  ;
   TDirectory *cur_dir = gDirectory;   
   TString hName="";
   TIter nextkey(dir->GetListOfKeys()); 
   TKey *key;
-
   while ((key=(TKey*)nextkey())) {
-
     if(key->IsFolder() && !TString(key->GetClassName()).Contains("TTree")){
-      if(0 == dir_depth ) 
-	{
+      if(0 == dir_depth ) {
 	  dName = (TString)key->GetName();
 	  mName = dName;
 	  (&dirName)->push_back((TString)key->GetName());
-	}
-      else
-	{
+	} else {
 	  (&dirName)->push_back((TString)key->GetName());
 	  dName = dName+(TString)"_"+(TString)key->GetName();  
 	}
@@ -74,42 +67,33 @@ void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TStrin
       cur_dir->cd();}
     else if( ((TString)key->GetClassName()).Contains("TH1")){ //||((TString)key->GetClassName()).Contains("TH2") ) {
       Hist hist_container;
-      if(key->GetClassName()=="TH2D")//replace this with find function
-	{
-	  hist_container.h2= (TH2D*)(key->ReadObj())->Clone();
-	  hist_container.h2->SetDirectory(0);
-	}
-      else
-	{	
-	  hist_container.h= (TH1D*)(key->ReadObj())->Clone();
-	  hist_container.h->SetDirectory(0);
-	  Set_integral(&hist_container,hist_container.h->GetMinimumBin(),hist_container.h->GetMaximumBin());
-	  hName = (*sample_name)+(TString)"_"+dName+(TString)"_"+(TString)key->GetName();  
-	  hist_container.h->SetName(hName);
-	  if(*type==bkg) hist_container.h->SetFillColor(col);
-	  if(*type==sig) hist_container.h->SetLineWidth(3);
-	  //	  if(*type==sig) hist_container.h->SetMarkerSize(0);
-	  if(*type==sig) hist_container.h->SetOption("HIST");
-	  hist_container.h->SetLineColor(col); 
-	}
-
+      if(key->GetClassName()=="TH2D"){//replace this with find function
+	hist_container.h2= (TH2D*)(key->ReadObj())->Clone();
+	hist_container.h2->SetDirectory(0);
+      } else {	
+	hist_container.h= (TH1D*)(key->ReadObj())->Clone();
+	hist_container.h->SetDirectory(0);
+	Set_integral(&hist_container,hist_container.h->GetMinimumBin(),hist_container.h->GetMaximumBin());
+	hName = (*sample_name)+(TString)"_"+dName+(TString)"_"+(TString)key->GetName();  
+	hist_container.h->SetName(hName);
+	if(*type==bkg) hist_container.h->SetFillColor(col);
+	if(*type==sig) hist_container.h->SetLineWidth(3);
+	//	  if(*type==sig) hist_container.h->SetMarkerSize(0);
+	if(*type==sig) hist_container.h->SetOption("HIST");
+	hist_container.h->SetLineColor(col); 
+      }
       hist_container.sample_name=sample_name;      
       hist_container.dir=dirName;
       hist_container.type=type;
       dir_container->push_back(hist_container);                  
     }
     else continue;
-
-
   }
-  cout << " I am here! Histo after loop " << endl;
   //the logic reaches this point either after looping over the histograms in a dir or while finalizing the loop over dirs. Therefore, this "if" statement is needed
-  if(dir_container->size()) 
-    { 
-      hists->push_back(*dir_container);
-      dir_container=new Hists_container;
-    }
- 
+  if(dir_container->size()) { 
+    hists->push_back(*dir_container);
+    dir_container=new Hists_container;
+  }
 }
 
 int plotting::Histo::Print() const {

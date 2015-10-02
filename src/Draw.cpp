@@ -91,7 +91,7 @@ void plotting::Draw::mc_sequence(std::vector<Dir_container>* mc_hists, std::vect
 	mc_dir_stack = new Hists_container;
 	Hist* mc_stack = new Hist;
 	//loop iver hist containers
-	std::cout << " size hist_container_it=mc_hists->at(j)->at(i) : " << mc_hists->at(j)->at(i).size() << std::endl;
+	//	std::cout << " size hist_container_it=mc_hists->at(j)->at(i) : " << mc_hists->at(j)->at(i).size() << std::endl;
 	for(hist_container_it=mc_hists->at(j)->at(i).begin();hist_container_it!=mc_hists->at(j)->at(i).end();hist_container_it++){
 	  if(addhists){
 	    mc_stack->h=(TH1D*)hist_container_it->h->Clone();
@@ -105,7 +105,7 @@ void plotting::Draw::mc_sequence(std::vector<Dir_container>* mc_hists, std::vect
       } else {
 	int index = 0;
 	std::vector<Hist>::iterator hist_container_it;
-	std::cout << " size hist_container_it=mc_hists->at(j)->at(i) : " << mc_hists->at(j)->at(i).size() << std::endl;
+	//	std::cout << " size hist_container_it=mc_hists->at(j)->at(i) : " << mc_hists->at(j)->at(i).size() << std::endl;
 	for(hist_container_it=mc_hists->at(j)->at(i).begin();hist_container_it!=mc_hists->at(j)->at(i).end();hist_container_it++){
 	  if(addhists){
 	    mc_hists_stack->at(i).at(index).h->Add(hist_container_it->h);
