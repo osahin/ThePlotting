@@ -30,39 +30,43 @@ ozgur[no_spam].sahin[spam_not]@cern.ch
 /* Everything starts from this method (since it is called in the constructor :)), 
  loop over path files and arrange samples*/
 using namespace plotting;
+using std::cout;
+using std::endl;
 void plotting::Draw::arrange_hists(const TString& config_path){
   TH1::SetDefaultSumw2(true);
   gErrorIgnoreLevel = kWarning;
-  properties property(config_path);
-  std::vector<TString*>::iterator path_it;
+  properties sample_properties(config_path);
+  std::vector<properties::sample_prop>::iterator prop_it;
   //Don't worry we are not moving the objects, just put their addresses together.
   dat_hists = new std::vector<Dir_container>;
   bkg_hists = new std::vector<Dir_container>;
   sig_hists = new std::vector<Dir_container>;
+  int line_style = 0;
   //YOU CAN SET COLOR COMP FOR THE SAMPLES HERE
-  for(path_it = property.paths.begin(); path_it != property.paths.end(); path_it++){
-    if(dat == property.sample_prop[(**path_it)]){	
-      Histo* sample= new Histo(property.sample_prop[(**path_it)],(*path_it), property.sub_dir);
+  for(prop_it = sample_properties.property->begin(); prop_it != sample_properties.property->end(); prop_it++){
+    if(dat == prop_it->sample_type){	
+      Histo* sample= new Histo(prop_it->sample_type, prop_it->path, prop_it->sub_dir, prop_it->weight);
       dat_hists->push_back((sample->hists));
-    } else if(bkg == property.sample_prop[(**path_it)]) {	
-      ColorStyle.SetColorComp(kBlueComp);
-      Histo* sample= new Histo(property.sample_prop[(**path_it)],(*path_it), property.sub_dir,ColorStyle.GetColor());
+    } else if(bkg == prop_it->sample_type) {	
+      ColorStyle.SetColorComp(kThesisComp);
+      Histo* sample= new Histo(prop_it->sample_type, prop_it->path, prop_it->sub_dir, ColorStyle.GetColor(),  prop_it->weight);
       bkg_hists->push_back((sample->hists));
-    } else if(sig == property.sample_prop[(**path_it)]){	
+    } else if(sig == prop_it->sample_type){	
+      line_style++;
+      std::cout << line_style << std::endl;
       ColorStyle.SetColorComp(kRedComp);
-      Histo* sample= new Histo(property.sample_prop[(**path_it)],(*path_it), property.sub_dir,ColorStyle.GetColor());
+      Histo* sample= new Histo(prop_it->sample_type, prop_it->path, prop_it->sub_dir, ColorStyle.GetColor(), line_style,  prop_it->weight);
       sig_hists->push_back((sample->hists));
     }
   }
-  std::cout << " after filling the histograms" << std::endl; 
   //Here the objects are sorted and THStacks are created
   if(bkg_hists->size()!=0){
     bkg_hists_stack = new std::vector<Hists_container>;
-    mc_sequence(bkg_hists,bkg_hists_stack,true,true);
+    mc_sequence(bkg_hists,bkg_hists_stack,true,false);
   }
   if(sig_hists->size()!=0){
-      sig_hists_stack = new std::vector<Hists_container>;
-      mc_sequence(sig_hists,sig_hists_stack,false,true);
+    sig_hists_stack = new std::vector<Hists_container>;
+    mc_sequence(sig_hists,sig_hists_stack,false,true);
   }
 }
 /*This method creates the bkg stacks and it makes the life easier for the Pad class. The sort function is called here as well
@@ -78,7 +82,7 @@ void plotting::Draw::mc_sequence(std::vector<Dir_container>* mc_hists, std::vect
   //Identical directory structure among different samples is assumed here
   //To sort over the samples [first index of the container] for each selection region/directory [second index] we started to loop
   // starting from second index
-  std::cout << " enterin the loop !! mc_hists->at(0) " <<  mc_hists->at(0)->size() << std::endl; //<< " mc_hists->at(1) " <<  mc_hists->at(1)->size() << " mc_hists->at(2) " <<  mc_hists->at(2)->size() << std::endl;
+  //  std::cout << " enterin the loop !! mc_hists->at(0) " <<  mc_hists->at(0)->size() << std::endl; //<< " mc_hists->at(1) " <<  mc_hists->at(1)->size() << " mc_hists->at(2) " <<  mc_hists->at(2)->size() << std::endl;
   for(i=0;i<mc_hists->at(0)->size();i++) {
     if(sorthists){
       sort_hist.i = i;
@@ -119,32 +123,43 @@ void plotting::Draw::mc_sequence(std::vector<Dir_container>* mc_hists, std::vect
 }
 //YOU CAN COPY THIS METHOD TO CREATE YOUR OWN CANVASES
 //Control plots are produced here.
+
 void plotting::Draw::ControlRatioPlot(const bool createfiles,const TString& extension){
   Dir* PlotDir= new Dir("RatioControlPlots");
   //  PlotDir->print_mDir();//prints the main dir
   TFile * ratiocontrol = new TFile ("RatioControlPlots.root", "RECREATE");
   // HERE YOU CAN CHANGE THE ORDER OF THE PADS
-  Ratio<TH1D,TH1D,TH1D> RatioPlot( kSmall, kBottom,(TString) "ratio");
-  Control<TH1D,THStack,THStack> ControlPlot( kBig, kTop,(TString) "control");
+  Ratio<TH1D,TH1D,TH1D> RatioPlot( kSmall, kTop,(TString) "ratio");
+  Control<TH1D,THStack,THStack> ControlPlot( kBig, kBottom,(TString) "control");
   //iterates over the sample objects
   std::vector<Hists_container>::iterator bkg_dir_it;
-  std::vector<Hists_container>::iterator sig_dir_it =  sig_hists_stack->begin();;
-  std::vector<Hists_container>::iterator data_dir_it = dat_hists->at(0)->begin();
+  std::vector<Hists_container>::iterator sig_dir_it;
+  if(sig_hists->size()!=0) sig_dir_it =  sig_hists_stack->begin();
+  std::vector<Hists_container>::iterator data_dir_it;
+  if(dat_hists->size()!=0) data_dir_it  = dat_hists->at(0)->begin();
   //same file structure is assumed here
   for(bkg_dir_it = bkg_hists_stack->begin(); bkg_dir_it != bkg_hists_stack->end(); bkg_dir_it++){
       std::vector<Hist>::iterator bkg_hist_it;
-      std::vector<Hist>::iterator sig_hist_it  = sig_dir_it->begin();
-      std::vector<Hist>::iterator data_hist_it = data_dir_it->begin();
+      std::vector<Hist>::iterator sig_hist_it;
+      if(sig_hists->size()!=0)      sig_hist_it  = sig_dir_it->begin();
+      std::vector<Hist>::iterator data_hist_it;
+      if(dat_hists->size()!=0) data_hist_it = data_dir_it->begin();
       TString canvas_name;
       for(bkg_hist_it =(bkg_dir_it)->begin(); bkg_hist_it != (bkg_dir_it)->end(); bkg_hist_it++){
 	  canvas_name = (TString)bkg_hist_it->h->GetName()+(TString)"_canvas";
-	  TCanvas *c1 = new TCanvas(canvas_name,canvas_name,600, 700); 
+	  //	  std::cout << bkg_hist_it->dir.size() << std::endl;
+	  TCanvas *c1 = new TCanvas(canvas_name,canvas_name,900, 1000); 
 	  TPad * rat = RatioPlot.DrawPlot((TH1D*)data_hist_it->h, (TH1D*)bkg_hist_it->h);
 	  c1->cd();
-	  TPad * cont =ControlPlot.DrawPlot((TH1D*)data_hist_it->h, (THStack*)bkg_hist_it->stack, (THStack*)sig_hist_it->stack);
+	  TPad * cont;
+	  if(sig_hists->size()!=0 && dat_hists->size()!=0)  cont =ControlPlot.DrawPlot((TH1D*)data_hist_it->h, (THStack*)bkg_hist_it->stack, (THStack*)sig_hist_it->stack);
+	  else if(sig_hists->size()!=0)  cont =ControlPlot.DrawPlot(0,(THStack*)bkg_hist_it->stack, (THStack*)sig_hist_it->stack);
+	  else if(dat_hists->size()!=0) { cont =ControlPlot.DrawPlot((TH1D*)data_hist_it->h,(THStack*)bkg_hist_it->stack,0);}
+	  else cont =ControlPlot.DrawPlot(0,(THStack*)bkg_hist_it->stack);
 	  c1->Update();
 	  c1->Write();
 	  if(createfiles)  PlotDir->SaveCanvas(extension,data_hist_it->dir,c1);
+	  c1->Clear();
 	  data_hist_it++; 
 	  sig_hist_it++; 
 	}
@@ -152,10 +167,14 @@ void plotting::Draw::ControlRatioPlot(const bool createfiles,const TString& exte
       sig_dir_it++;
     }
   ratiocontrol->Close();
+  delete PlotDir;
+  delete ratiocontrol;
   }
+
 //YOU CAN COPY THIS METHOD TO CREATE YOUR OWN CANVASES
 //Control plots are produced here.
-/*void plotting::Draw::ControlRatioPlot(const bool createfiles,const TString& extension)
+/*
+void plotting::Draw::ControlRatioPlot(const bool createfiles,const TString& extension)
 {
   TCanvas *c1;
   TPad* cont,*rat;
@@ -234,7 +253,7 @@ void plotting::Draw::ControlBkgPlot(const bool createfiles,const TString& extens
       for(bkg_hist_it =(bkg_dir_it)->begin(); bkg_hist_it != (bkg_dir_it)->end(); bkg_hist_it++)
 	{
 	  canvas_name = (TString)bkg_hist_it->h->GetName()+(TString)"_canvas";
-	  TCanvas *c1 = new TCanvas(canvas_name,canvas_name,600, 700); 
+	  TCanvas *c1 = new TCanvas(canvas_name,canvas_name,1200, 1400); 
 	  //  TPad * rat = RatioPlot.DrawPlot((TH1D*)data_hist_it->h, (TH1D*)bkg_hist_it->h);
 	  c1->cd();
 
@@ -243,7 +262,7 @@ void plotting::Draw::ControlBkgPlot(const bool createfiles,const TString& extens
 	  else TPad * cont =ControlPlot.DrawPlot(0, (THStack*)bkg_hist_it->stack, 0);
 	  c1->Update();
 	  c1->Write();
-	  
+
 	  if(createfiles)  PlotDir->SaveCanvas(extension,bkg_hist_it->dir,c1);
 	  //	  data_hist_it++; 
 	  if(sig_hists->size()) 	  sig_hist_it++; 
