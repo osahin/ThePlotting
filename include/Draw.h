@@ -23,7 +23,8 @@ namespace plotting{
     Draw(const TString& config_path){
       arrange_hists(config_path);
     };
-    ~Draw(){};
+    ~Draw(){
+    };
     void arrange_hists(const TString&);
     void ControlRatioPlot(bool createfiles = false, const TString & extension = "pdf");
     void ControlBkgPlot(bool createfiles = false, const TString & extension = "pdf");

@@ -17,7 +17,7 @@ TString plotting::MakeUp::AddSampleName(const TString &SampName)
   if(SampName.Contains("dilep",TString::kIgnoreCase)){
     tex = " #font[42]{t#bar{t}#rightarrow}#font[132]{#it{l#bar{l}}}";
   } else if(SampName.Contains("singlelep",TString::kIgnoreCase) || SampName.Contains("onelep",TString::kIgnoreCase)) {
-    tex =" #font[42]{1#font[12]{l} top}";
+    tex =" #font[42]{t#bar{t}#rightarrow}#font[132]{1#it{l}}";
   } else if(SampName.Contains("wjets",TString::kIgnoreCase)) {
     tex =" #font[42]{W+jets}"; 
   } else if(SampName.Contains("QCD",TString::kIgnoreCase)){
@@ -34,6 +34,14 @@ TString plotting::MakeUp::AddSampleName(const TString &SampName)
     tex =" #font[42]{T2tb (325,100)}";
   } else if(SampName.Contains("T2tb-mStop200mLSP25",TString::kIgnoreCase)) {
     tex =" #font[42]{T2tb (200,25)}";
+  } else if(SampName.Contains("t2tt_275_50",TString::kIgnoreCase)) {
+    tex =" #font[42]{#tilde{t} #rightarrow t #tilde{#chi}_{ 1}^{ 0} (275, 50)}";
+  } else if(SampName.Contains("t2tt_250_50",TString::kIgnoreCase)) {
+    tex =" #font[42]{#tilde{t} #rightarrow t #tilde{#chi}_{ 1}^{ 0} (250, 50)}";
+  } else if(SampName.Contains("t2tt_575_100",TString::kIgnoreCase)) {
+    tex =" #font[42]{#tilde{t} #rightarrow t #tilde{#chi}_{ 1}^{ 0} (575, 100)}";
+  } else if(SampName.Contains("t2tt_600_100",TString::kIgnoreCase)) {
+    tex =" #font[42]{#tilde{t} #rightarrow t #tilde{#chi}_{ 1}^{ 0} (600, 50)}";
   } else if(SampName.Contains("TTbar",TString::kIgnoreCase) && SampName.Contains("600-1100",TString::kIgnoreCase)) {
     tex =" #font[42]{t#bar{t} (600-1100) }";
   } else if(SampName.Contains("TTbar",TString::kIgnoreCase) && SampName.Contains("1100-1700",TString::kIgnoreCase)) {
@@ -72,19 +80,25 @@ void plotting::MakeUp::AddLegend(TH1D* h) {
   }
   legend->AddEntry(h,AddSampleName(h->GetName()));
 }
-void plotting::MakeUp::AddLegend(TH1D* h,const TString & samp_name) {
+void plotting::MakeUp::AddLegend(TH1D* h, const TString & samp_name) {
   if(!init){
     initlegend();
   }
   legend->AddEntry(h,AddSampleName(samp_name));
 }
-void plotting::MakeUp::AddLegend(THStack *s1) {
+void plotting::MakeUp::AddLegend(TH1D* h, const TString & samp_name, const TString& style) {
+  if(!init){
+    initlegend();
+  }
+  legend->AddEntry(h,AddSampleName(samp_name), style);
+}
+void plotting::MakeUp::AddLegend(THStack *s1, TString style) {
   if(!init) {
     initlegend();
   }
   TIter next1(s1->GetHists(),kIterBackward);
   while (TObject *obj = next1()){
-    legend->AddEntry((TH1D*)obj,AddSampleName(((TH1D*)obj)->GetName()),"lf");
+    legend->AddEntry((TH1D*)obj,AddSampleName(((TH1D*)obj)->GetName()), style);
   }
 }
 //The position (right) of the legend will be overwritten, 
@@ -92,24 +106,31 @@ void plotting::MakeUp::initlegend(){
   init = true;
   legend = new TLegend(0.60,0.60,0.84,0.925);
   legend->SetBorderSize(0);
-  legend->SetFillColor(0);
-  legend->SetFillStyle(0);
+  legend->SetFillColorAlpha(0,0.3);
+  //  legend->SetFillStyle(0);
   legend->SetTextSize(0.038);
   legend->SetEntrySeparation(0.15);
 }
 //The TeX
 void plotting::MakeUp::TeXCMS() {
-  cms = new TLatex(0.135,0.89,"CMS private");
+  cms = new TLatex(0.135,0.92,"CMS private");
   cms->SetNDC();
   cms->SetTextFont(62);
-  cms->SetTextColor(46);
-  cms->SetTextSize(0.035);
+  cms->SetTextColor(1);
+  cms->SetTextSize(0.040);
 }
 //here converting cms_energy and lumi from int and double to string does not worth the effort. Trust me...
 void plotting::MakeUp::TeXinfo(TString cms_energy,TString lumi){
-  info = new TLatex(0.135,0.82,"#int L dt = "+lumi+" fb^{-1}, #sqrt{s}="+cms_energy+" TeV");
+  info = new TLatex(0.135,0.85,"L = "+lumi+" fb^{-1}, #sqrt{s} = "+cms_energy+" TeV");
   info->SetNDC();
   info->SetTextFont(132);
   info->SetTextColor(1);
-  info->SetTextSize(0.035);
+  info->SetTextSize(0.050);
+}
+void plotting::MakeUp::Addinfo(){
+  ainfo = new TLatex(0.135,0.78,"CR3");
+  ainfo->SetNDC();
+  ainfo->SetTextFont(61);
+  ainfo->SetTextColor(1);
+  ainfo->SetTextSize(0.05);
 }

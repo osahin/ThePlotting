@@ -16,7 +16,7 @@ Author: OS
   kYellow=400, kMagenta=616, kCyan=432, kOrange=800, kSpring=820, 
   kTeal=840, kAzure=860, kViolet=880, kPink=900*/
 namespace plotting{
-  enum ColorStyle_t {kRedComp, kBlueComp, kGreenComp, kMultiComp, kBlueShadeComp};
+  enum ColorStyle_t {kRedComp, kBlueComp, kGreenComp, kMultiComp, kBlueShadeComp, kThesisComp};
   class Color{
   public:
     
@@ -44,6 +44,7 @@ namespace plotting{
     std::map<int,int> GreenComp;
     std::map<int,int> MultiComp;
     std::map<int,int> BlueShadeComp;
+    std::map<int,int> ThesisComp;
   };  
 };
 #endif

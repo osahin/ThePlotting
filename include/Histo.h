@@ -39,29 +39,41 @@ namespace plotting{
   
   class Histo: public Histo_base {
   public:
-    Histo(Histo_t sample_type,  TString* path, TString *sub_dir){
+    Histo(Histo_t sample_type,  TString* path, TString *sub_dir, double w){
       init();
-      fill_hist(&sample_type, path, sub_dir);
       col=1; 
-    };
-    
-    Histo(Histo_t sample_type,  TString* path, TString *sub_dir, int c){
+      weight = w;
+      line_style = 1;
+      fill_hist(&sample_type, path, sub_dir);
+    };    
+    Histo(Histo_t sample_type,  TString* path, TString *sub_dir, int c, double w){
       init();
       col = c;
+      weight = w;
+      line_style = 1;
       fill_hist(&sample_type, path, sub_dir);
-      };
+    };
+    Histo(Histo_t sample_type,  TString* path, TString *sub_dir, int c, int linesty, double w){
+      init();
+      col = c;
+      weight = w;
+      line_style = linesty;
+      fill_hist(&sample_type, path, sub_dir);
+    };
+
     Histo(){};
-    ~Histo(){};
+    ~Histo(){
+    };
     Dir_container hists;//this object will be partitioned wrt to the dirs
   private:
     Hists_container * dir_container; //this is to be used in Loop_histos method
-    void init()
-    {
+    void init(){
       hists=new std::vector<Hists_container>;
       dir_container = new Hists_container;
     }
     void Set_integral( Hist* hist_it, int min, int max);
-    int col;
+    int col, line_style;
+    double weight;
     TString* sample_name;
     int Print() const;
     void Loop_histos(TDirectory *, Histo_t*, std::vector<TString>& dirName, TString * sub_dir = 0, int dir_depth = 0, TString dName="",TString mName="");

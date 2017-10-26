@@ -7,6 +7,9 @@ Author: OS
 #include <TH1D.h>
 #include <THStack.h>
 #include <TString.h>
+#include <TAttAxis.h>
+#include "TColorGradient.h"
+#include "TStyle.h"
 #include <cmath>
 #include <iostream>
 #include <TLine.h>
@@ -26,28 +29,30 @@ namespace plotting{
     TString name = (TString)"Ratio plot of "+data->GetName()+" vs "+background->GetName();
     dat_type* ratio = (dat_type*)data->Clone(name);
     pad1->cd();
-    ratio->GetYaxis()->SetLabelFont(MakeUp::font_helv); //font in pixels
-    ratio->GetYaxis()->SetLabelSize(16); //in pixels
     ratio->SetStats(0);
     ratio->SetTitle("");
     ratio->Divide(background);
     double min;
     double max;
-    ratio->GetYaxis()->SetTitle      ((TString)"#frac{data}{MC}");
+    ratio->GetYaxis()->SetTitle      ((TString)"#frac{data}{SM}");
+    ratio->GetYaxis()->SetLabelFont(42); //font in pixels
+    ratio->GetYaxis()->SetLabelSize(0.18); //in pixels
     ratio->GetYaxis()->SetTitleFont  (42);
     ratio->GetYaxis()->CenterTitle   ();
-    ratio->GetYaxis()->SetTitleSize  (15); 
-    ratio->GetYaxis()->SetTitleOffset(1.75); 
+    ratio->GetYaxis()->SetTitleSize  (0.19); 
+    ratio->GetYaxis()->SetTitleOffset(0.24); 
+    ratio->GetYaxis()->SetTickSize(0.02);
+    ratio->SetMarkerStyle(1);
     ratio->SetMarkerStyle(1);
     if(Pad<dat_type,bkg_type,sig_type>::pos==kTop) {
       ratio->SetLabelSize(0,"X");
     } else {
-      ratio->GetXaxis()->SetLabelSize  (16); //in pixel
+      ratio->GetXaxis()->SetLabelSize  (0.12); //in pixel
       ratio->GetXaxis()->SetLabelFont  (42);
       ratio->GetXaxis()->SetTitle      (background->GetTitle());
       ratio->GetXaxis()->SetTitleFont  (42); 
-      ratio->GetXaxis()->SetTitleSize  (15.5); 
-      ratio->GetXaxis()->SetTitleOffset(4.5);
+      ratio->GetXaxis()->SetTitleSize  (0.150); 
+      ratio->GetXaxis()->SetTitleOffset(0.95);
     }
     ratio->GetYaxis()->SetNdivisions(505);
     ratio->GetXaxis()->SetNdivisions(505);
@@ -71,16 +76,25 @@ namespace plotting{
 	ratio->SetMaximum(2.001); 
 	ratio->SetMinimum(-0.001); 
       } else { 
-	ratio->SetMaximum(1.501); ratio->SetMinimum(0.499); 
+	ratio->SetMaximum(1.5001); ratio->SetMinimum(0.4999); 
       }
     }
+
+
+	ratio->SetMaximum(2.001); 
+	ratio->SetMinimum(-0.001); 
+
+
     pad1->Update();
     pad1->SetTicky();
     pad1->SetTickx();
     ratio->SetMarkerColor(MakeUp::ratio_color);
     ratio->SetLineColor(MakeUp::ratio_color);
-    ratio->Draw("ep");
+    ratio->SetFillColor(MakeUp::ratio_color);
+    ratio->SetMarkerStyle(20);
+    ratio->Draw("E");
     TLine* line = new TLine(ratio->GetXaxis()->GetXmin(),1,ratio->GetXaxis()->GetXmax(),1);
+    line->SetLineColorAlpha(1,0.3);
     line->Draw();
     pad1->Update();
     return pad1;

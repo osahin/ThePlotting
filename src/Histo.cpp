@@ -11,8 +11,7 @@ Author:OS
 #include <cstdlib>
 using namespace std;
 //simple method that sets the integral for the given value to Hist container 
-void plotting::Histo::Set_integral(Hist* hist_it,int min, int max)  {
-  
+void plotting::Histo::Set_integral(Hist* hist_it,int min, int max)  {  
   (*hist_it).integ_reg=(*hist_it).h->Integral(min,max);
   //cout <<"integral " << (*hist_it).integ_reg << endl;
 }
@@ -64,27 +63,42 @@ void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TStrin
       dir_depth--;
       dName = mName;
       (&dirName)->pop_back();
-      cur_dir->cd();}
+      cur_dir->cd();
+    }
     else if( ((TString)key->GetClassName()).Contains("TH1")){ //||((TString)key->GetClassName()).Contains("TH2") ) {
       Hist hist_container;
       if(key->GetClassName()=="TH2D"){//replace this with find function
 	hist_container.h2= (TH2D*)(key->ReadObj())->Clone();
 	hist_container.h2->SetDirectory(0);
+	//	if(weight > -0.1)   hist_container.h2->Multiply(hist_container.h2,weight);
       } else {	
-	hist_container.h= (TH1D*)(key->ReadObj())->Clone();
+	hist_container.h= (TH1D*)(key->ReadObj())->Clone("new");
 	hist_container.h->SetDirectory(0);
+	//	hist_container.h->Rebin(2);
 	Set_integral(&hist_container,hist_container.h->GetMinimumBin(),hist_container.h->GetMaximumBin());
-	hName = (*sample_name)+(TString)"_"+dName+(TString)"_"+(TString)key->GetName();  
-	hist_container.h->SetName(hName);
-	if(*type==bkg) hist_container.h->SetFillColor(col);
-	if(*type==sig) hist_container.h->SetLineWidth(3);
-	//	  if(*type==sig) hist_container.h->SetMarkerSize(0);
-	if(*type==sig) hist_container.h->SetOption("HIST");
-	hist_container.h->SetLineColor(col); 
+	if(weight > -0.1)   hist_container.h->Scale(weight);
+	if (*type==bkg) {
+	  hist_container.h->SetFillColorAlpha(col,0.7);
+	  hist_container.h->SetLineColorAlpha(1.,1.);
+	  hist_container.h->SetLineWidth(1);
+	} else if (*type==sig) {
+	  hist_container.h->SetLineWidth(3);
+	  hist_container.h->SetLineStyle(line_style);
+	  hist_container.h->SetLineColorAlpha(col,0.6); 
+	}
+	else if (*type==dat) {
+	  hist_container.h->SetLineColorAlpha(1.,1.);
+	  hist_container.h->SetLineWidth(2);
+	}
       }
       hist_container.sample_name=sample_name;      
       hist_container.dir=dirName;
       hist_container.type=type;
+      hName = (*sample_name)+(TString)"_";
+      for(int ind = 0; ind < dirName.size();ind++)
+	hName += dirName.at(ind)+(TString)"_";
+      hName+=(TString)key->GetName();  
+      hist_container.h->SetName(hName);
       dir_container->push_back(hist_container);                  
     }
     else continue;
@@ -95,7 +109,6 @@ void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TStrin
     dir_container=new Hists_container;
   }
 }
-
 int plotting::Histo::Print() const {
   cout<<"Hello world!"<<endl;
   return 0;

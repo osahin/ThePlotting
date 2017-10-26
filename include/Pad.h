@@ -37,13 +37,14 @@ namespace plotting{
   {
     TPad *pad =new TPad(name1+name2,name1+name2,0,0,1,1);
     //Probably there is a better way of doing this but for the moment I am happy with it
-    
+    pad->SetRightMargin(0.03);
+    pad->SetLeftMargin(0.11);
     if(kBottom == pos){
       if(kBig == size)
 	{
-	  pad->SetTopMargin(0.02);
-	  pad->SetBottomMargin(0.1);
-	  pad->SetPad(0,0,1,0.75);
+	  pad->SetTopMargin(0.012);
+	  pad->SetBottomMargin(0.14);
+	  pad->SetPad(0,0,1,0.80);
 	}
       else if( kMedium == size)
 	{
@@ -74,18 +75,18 @@ namespace plotting{
 	}
       else if(kSmall == size)
 	{
-	  pad->SetPad(0,0.75,1,1);
-	  pad->SetTopMargin(0.12);
-	  pad->SetBottomMargin(0.045);
+	  pad->SetPad(0,0.80,1,1);
+	  pad->SetTopMargin(0.09);
+	  pad->SetBottomMargin(0.066);
 	}
       
   }
     else if(kMiddle == pos){
       if(size == kBig)
 	{
-	  pad->SetPad(0,0.05,1,0.95);
-	  pad->SetTopMargin(0.04);
-	  pad->SetBottomMargin(0.1);
+	  pad->SetPad(0,0.01,1,0.99);
+	  pad->SetTopMargin(0.03);
+	  pad->SetBottomMargin(0.12);
 	}
       else if (kMedium == size)
 	pad->SetPad(0,0.25,1,0.75);
