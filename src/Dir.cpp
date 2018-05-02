@@ -13,6 +13,8 @@ ozgur[no_spam].sahin[spam_not]@cern.ch
 #include <unistd.h>
 #include <cstdlib>
 #include <TCanvas.h>
+#include <ctime>
+#include <TText.h>
 using std::cout;
 using std::cin;
 using std::endl;
@@ -28,7 +30,8 @@ void plotting::Dir::SaveCanvas(const TString &option, const std::vector<TString>
     }
   if(eq)
     {
-      c1->SaveAs((TString)c1->GetName()+"."+option);
+        c1->SaveAs((TString)c1->GetName()+"."+option);
+//      c1->Print("plots.pdf","pdf");
     }
   else {
     if(chdir(pDir)) { cout << "can not go back to the plotting directory" << endl; exit(0);}
@@ -43,7 +46,33 @@ void plotting::Dir::SaveCanvas(const TString &option, const std::vector<TString>
 	
       }
     c1->SaveAs((TString)c1->GetName()+"."+option);
+//    c1->Print("plots.pdf","pdf");
   }
   prev_path = dirName;
 }
 
+void plotting::Dir::CreateFolder( TCanvas * title){
+  time_t rawtime;
+  struct tm * timeinfo;
+  char buffer[80];
+
+  time (&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  strftime(buffer,sizeof(buffer),"%d-%m-%Y %I:%M:%S",timeinfo);
+  TString introt (" (plots generated ");
+  introt = introt + TString(buffer) + TString(")");
+  TText * thePlotting = new TText (0.1,0.2, "The Plotting Tool");
+  TText * thePlottingt = new TText (0.1,0.1, introt.Data());
+  
+  title->cd();
+  thePlotting->Draw();
+  thePlottingt->Draw();
+  title->Print("plots.pdf(","pdf");
+  
+}
+void plotting::Dir::EndFolder(TCanvas * end){
+  TText * thePlotting = new TText (0.1,0.2, "The Plotting Tool EOF");
+  thePlotting->Draw();
+  end->Print("plots.pdf)","pdf"); 
+}

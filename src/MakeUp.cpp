@@ -67,9 +67,25 @@ TString plotting::MakeUp::AddSampleName(const TString &SampName)
   } else if(SampName.Contains("t2t",TString::kIgnoreCase) && SampName.Contains("900",TString::kIgnoreCase)) {
     tex =" #font[42]{T2tt (900-100) }";
   } else if(SampName.Contains("ttbar",TString::kIgnoreCase) && SampName.Contains("all",TString::kIgnoreCase)) {
-    tex ="{t#bar{t}}";
+    tex ="#font[42]{t#bar{t}}";
   } else if(SampName.Contains("bosonjets",TString::kIgnoreCase) && SampName.Contains("all",TString::kIgnoreCase)) {
-    tex ="{W+Jets}";
+    tex ="#font[42]{W+Jets}";
+  } else if(SampName.Contains("dipho",TString::kIgnoreCase)) {
+    tex ="#font[42]{#gamma#gamma+Jets}";
+  } else if(SampName.Contains("ttgjet",TString::kIgnoreCase)) {
+    tex ="#font[42]{tt+#gamma+Jets}";
+  } else if(SampName.Contains("ttgg",TString::kIgnoreCase)) {
+    tex ="#font[42]{tt+#gamma#gamma}";
+  } else if(SampName.Contains("tth_",TString::kIgnoreCase)) {
+    tex ="#font[42]{ttHx50}";
+  } else if(SampName.Contains("tgjet",TString::kIgnoreCase)) {
+    tex ="#font[42]{t+#gamma+Jet}";
+  } else if(SampName.Contains("gjet",TString::kIgnoreCase)) {
+    tex ="#font[42]{#gamma+Jet}";
+  } else if(SampName.Contains("ggH",TString::kIgnoreCase)) {
+    tex ="#font[42]{ggHx100}";
+  } else if(SampName.Contains("vbf",TString::kIgnoreCase)) {
+    tex ="#font[42]{VBFH-x100 }";
   } else tex = " #font[42]{"+SampName+"}";
   return tex;
 }
@@ -125,12 +141,12 @@ void plotting::MakeUp::TeXinfo(TString cms_energy,TString lumi){
   info->SetNDC();
   info->SetTextFont(132);
   info->SetTextColor(1);
-  info->SetTextSize(0.050);
+  info->SetTextSize(0.04);
 }
 void plotting::MakeUp::Addinfo(){
-  ainfo = new TLatex(0.135,0.78,"CR3");
+  ainfo = new TLatex(0.135,0.78,"");
   ainfo->SetNDC();
   ainfo->SetTextFont(61);
   ainfo->SetTextColor(1);
-  ainfo->SetTextSize(0.05);
+  ainfo->SetTextSize(0.04);
 }

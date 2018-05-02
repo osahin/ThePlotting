@@ -32,7 +32,7 @@ namespace plotting{
       init = false;
       t->cd();
       legend->Draw();
-      t->SetLogy();
+      //      t->SetLogy();
       t->SetTicky(1);
       t->SetTickx(1);
       t->Update();
@@ -56,7 +56,7 @@ namespace plotting{
     TString AddSampleName(const TString &SampName);    
     void initlegend();
     void TeXCMS ();
-    void TeXinfo (TString cms_energy = "8",TString lumi = "19.5");
+    void TeXinfo (TString cms_energy = "13",TString lumi = "35.9");
     void Addinfo ();
     TLatex* cms;
     TLatex* info;

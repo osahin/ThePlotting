@@ -19,7 +19,7 @@ namespace plotting{
   template<class dat_type, class bkg_type, class sig_type>  class Ratio : Pad<dat_type,bkg_type,sig_type>{
   private:
   public:
-    Ratio(SizePad_t s, PositionPad_t p, TString t):Pad<dat_type,bkg_type,sig_type>(s,p,t){};
+  Ratio(SizePad_t s, PositionPad_t p, TString t):Pad<dat_type,bkg_type,sig_type>(s,p,t){};
     ~Ratio(){};
     TPad* DrawPlot(dat_type*,bkg_type*,sig_type* signal = 0);
   };
@@ -34,13 +34,13 @@ namespace plotting{
     ratio->Divide(background);
     double min;
     double max;
-    ratio->GetYaxis()->SetTitle      ((TString)"#frac{data}{SM}");
+    ratio->GetYaxis()->SetTitle      ((TString)"#frac{data}{MC}");
     ratio->GetYaxis()->SetLabelFont(42); //font in pixels
-    ratio->GetYaxis()->SetLabelSize(0.18); //in pixels
+    ratio->GetYaxis()->SetLabelSize(0.11); //in pixels
     ratio->GetYaxis()->SetTitleFont  (42);
     ratio->GetYaxis()->CenterTitle   ();
-    ratio->GetYaxis()->SetTitleSize  (0.19); 
-    ratio->GetYaxis()->SetTitleOffset(0.24); 
+    ratio->GetYaxis()->SetTitleSize  (0.15); 
+    ratio->GetYaxis()->SetTitleOffset(0.33);
     ratio->GetYaxis()->SetTickSize(0.02);
     ratio->SetMarkerStyle(1);
     ratio->SetMarkerStyle(1);
@@ -52,7 +52,7 @@ namespace plotting{
       ratio->GetXaxis()->SetTitle      (background->GetTitle());
       ratio->GetXaxis()->SetTitleFont  (42); 
       ratio->GetXaxis()->SetTitleSize  (0.150); 
-      ratio->GetXaxis()->SetTitleOffset(0.95);
+      ratio->GetXaxis()->SetTitleOffset(0.94);
     }
     ratio->GetYaxis()->SetNdivisions(505);
     ratio->GetXaxis()->SetNdivisions(505);
@@ -79,12 +79,8 @@ namespace plotting{
 	ratio->SetMaximum(1.5001); ratio->SetMinimum(0.4999); 
       }
     }
-
-
-	ratio->SetMaximum(2.001); 
-	ratio->SetMinimum(-0.001); 
-
-
+    ratio->SetMaximum(2.001); 
+    ratio->SetMinimum(-0.001); 
     pad1->Update();
     pad1->SetTicky();
     pad1->SetTickx();

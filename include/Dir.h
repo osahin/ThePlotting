@@ -24,16 +24,19 @@ namespace plotting{
       else
  	pDir = getcwd(dir, sizeof(dir));
     };
-    ~Dir(){chdir(mDir);};
+    ~Dir(){
+      chdir(mDir);
+    };
     void print_mDir() {std::cout << "mother dir is " << mDir << std::endl;}
     void print_curDir() {curDir = getcwd(dir, sizeof(dir)); std::cout << "current dir is " << curDir << std::endl;}
-    void SaveCanvas(const TString& option, const std::vector<TString>&dirName, TCanvas* c1);    
+    void SaveCanvas(const TString& option, const std::vector<TString>&dirName, TCanvas* c1);
+    void CreateFolder(TCanvas * );
+    void EndFolder(TCanvas * );    
   private:
     char dir[100];
     TString mDir;//main dir
     TString pDir;//plotting dir
     TString curDir;
-
     std::vector<TString> prev_path;
   };  
 };

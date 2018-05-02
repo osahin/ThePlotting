@@ -13,7 +13,6 @@ using namespace std;
 //simple method that sets the integral for the given value to Hist container 
 void plotting::Histo::Set_integral(Hist* hist_it,int min, int max)  {  
   (*hist_it).integ_reg=(*hist_it).h->Integral(min,max);
-  //cout <<"integral " << (*hist_it).integ_reg << endl;
 }
 /*
 For each given path iteratively loop over the directories
@@ -41,7 +40,6 @@ void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TStrin
     if(!gDirectory->cd((TString)dir->GetPath()+*sub_dir)) cout << " Could not open the subdir... Continue... " << endl;  
     dir=gDirectory;
   }
-  //  cout << "the dir path " << dir->GetPath() << "  the gDirectory: " << gDirectory->GetPath() <<endl  ;
   TDirectory *cur_dir = gDirectory;   
   TString hName="";
   TIter nextkey(dir->GetListOfKeys()); 
@@ -73,6 +71,7 @@ void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TStrin
 	//	if(weight > -0.1)   hist_container.h2->Multiply(hist_container.h2,weight);
       } else {	
 	hist_container.h= (TH1D*)(key->ReadObj())->Clone("new");
+	hist_container.h->Sumw2();        
 	hist_container.h->SetDirectory(0);
 	//	hist_container.h->Rebin(2);
 	Set_integral(&hist_container,hist_container.h->GetMinimumBin(),hist_container.h->GetMaximumBin());
@@ -97,7 +96,18 @@ void plotting::Histo::Loop_histos(TDirectory * dir,Histo_t * type, vector<TStrin
       hName = (*sample_name)+(TString)"_";
       for(int ind = 0; ind < dirName.size();ind++)
 	hName += dirName.at(ind)+(TString)"_";
-      hName+=(TString)key->GetName();  
+      hName+=(TString)key->GetName(); 
+      /* sanitizing hname */
+      hName.ReplaceAll(" ","_");
+      hName.ReplaceAll("\\","_");
+      hName.ReplaceAll("/","_");
+      hName.ReplaceAll("[","_");
+      hName.ReplaceAll("]","_");
+      hName.ReplaceAll("#","_");
+      hName.ReplaceAll("{","_");
+      hName.ReplaceAll("}","_");
+      hName.ReplaceAll("(","_");
+      hName.ReplaceAll(")","_");
       hist_container.h->SetName(hName);
       dir_container->push_back(hist_container);                  
     }

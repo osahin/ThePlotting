@@ -85,8 +85,8 @@ namespace plotting{
       if(size == kBig)
 	{
 	  pad->SetPad(0,0.01,1,0.99);
-	  pad->SetTopMargin(0.03);
-	  pad->SetBottomMargin(0.12);
+	  pad->SetTopMargin(0.04);
+	  pad->SetBottomMargin(0.13);
 	}
       else if (kMedium == size)
 	pad->SetPad(0,0.25,1,0.75);
