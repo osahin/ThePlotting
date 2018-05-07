@@ -33,12 +33,12 @@ namespace plotting{
     struct sort_ref : public std::binary_function<Hists_container*, Hists_container*,bool>
     {  
       int i;
-      static const int ref_var = 5; //njets - one can do this dynamic as well but I am too lazy to do it now...
+      static const int ref_var = 0; //njets - one can do this dynamic as well but I am too lazy to do it now...
       //compare function the variable location is hard coded for the moment
       //YOU CAN CHANGE THE REFERENCE VARIABLE TO COMPARE SAMPLES HERE
       bool operator()(Dir_container compare_begin, Dir_container compare_end) 
       {
-	return (compare_begin->at(i).at(ref_var).integ_reg < compare_end->at(i).at(ref_var).integ_reg);
+	return (compare_begin->at(i).at(ref_var).integ_reg > compare_end->at(i).at(ref_var).integ_reg);
       }
     } sort_hist;
     //containers
@@ -49,7 +49,7 @@ namespace plotting{
     std::vector<Dir_container>* sig_hists;//Signal
     std::vector<Dir_container>* dat_hists;//Data
 
-    void mc_sequence(std::vector<Dir_container>* mc_hists, Dir_container mc_hists_stack,bool addhists = true, bool sorthists = false);
+    void mc_sequence(std::vector<Dir_container>* mc_hists, Dir_container mc_hists_stack,bool addhists = true, bool sorthists = true);
     Color ColorStyle; 
   };
 };

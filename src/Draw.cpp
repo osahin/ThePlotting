@@ -149,7 +149,8 @@ void plotting::Draw::ControlRatioPlot(const bool createfiles,const TString& exte
 	  canvas_name = (TString)bkg_hist_it->h->GetName()+(TString)"_canvas";
 	  //	  std::cout << bkg_hist_it->dir.size() << std::endl;
 	  TCanvas *c1 = new TCanvas(canvas_name,canvas_name,900, 1000); 
-	  TPad * rat = RatioPlot.DrawPlot((TH1D*)data_hist_it->h, (TH1D*)bkg_hist_it->h);
+          TPad * rat;
+	  if(dat_hists->size()!=0) rat = RatioPlot.DrawPlot((TH1D*)data_hist_it->h, (TH1D*)bkg_hist_it->h);
 	  c1->cd();
 	  TPad * cont;
 	  if(sig_hists->size()!=0 && dat_hists->size()!=0)  cont =ControlPlot.DrawPlot((TH1D*)data_hist_it->h, (THStack*)bkg_hist_it->stack, (THStack*)sig_hist_it->stack);
@@ -158,7 +159,7 @@ void plotting::Draw::ControlRatioPlot(const bool createfiles,const TString& exte
 	  else cont =ControlPlot.DrawPlot(0,(THStack*)bkg_hist_it->stack);
 	  c1->Update();
 	  c1->Write();
-	  if(createfiles)  PlotDir->SaveCanvas(extension,data_hist_it->dir,c1);
+	  if(createfiles && dat_hists->size()!=0)  PlotDir->SaveCanvas(extension,data_hist_it->dir,c1);
 	  c1->Clear();
 	  data_hist_it++; 
 	  sig_hist_it++; 
