@@ -113,7 +113,7 @@ namespace plotting{
     TH1D* sigLegend2;
     //    sigLegend->Sumw2();
     if (normalize){
-      std::cout << "entering the signal  normalization " << std::endl;
+//      std::cout << "entering the signal  normalization " << std::endl;
       if (cl->InheritsFrom("THStack")) {   
         TH1D* sumh = new TH1D( *(TH1D*)signal->GetHists()->At(0));
         THStack* stack = new THStack( "signal", signal->GetTitle());      
@@ -132,7 +132,7 @@ namespace plotting{
           stack->Add( tmph);
         }
         signal = new THStack( *stack);
-        std::cout << " passed the normalization phase"  << std::endl;
+//        std::cout << " passed the normalization phase"  << std::endl;
       }
     }
     
