@@ -28,11 +28,11 @@ namespace plotting{
     //dat_type is derived from TH1
     //background will be used to style TPad
     bool Reverse = false;
-    bool normalize = false;
+    bool normalize = true;
     bool fom = false;
     const double top_offset = 1.2;
     if(data){
-      makeup.AddLegend(data,"data","PE0");
+      makeup.AddLegend(data,"data - SB","PE0");
     }
     makeup.AddLegend(background);
     if(signal){ 
@@ -105,7 +105,7 @@ namespace plotting{
         background = new THStack( *stack);
       }
 
-    background->Draw("HISTE");
+    background->Draw("HIST");
     
 
     if(signal)    cl = gROOT->GetClass(signal->ClassName());
@@ -168,7 +168,14 @@ namespace plotting{
     background->GetXaxis()->SetNdivisions(505);
     pad2->cd();
     pad2->Update();
-    if(data){ data->Draw("SAME,EPX0");}
+    if(data){ 
+        if (normalize == true){
+            data->DrawNormalized("SAME,EPX0");
+        } else {
+            data->Draw("SAME,EPX0");
+        }
+        
+    }
     if(signal){
       signal->Draw("SAME,HIST,NOSTACK");
       //      signal->SetMinimum(1);
@@ -176,17 +183,20 @@ namespace plotting{
     pad2->Update();
     //Set the visible range on Y axis 
     if(data){
-      if(background->GetMaximum() > data->GetMaximum()) {    
-	background->SetMaximum(background->GetMaximum()*top_offset);
-	background->SetMinimum(0.7);
-	background->GetYaxis()->SetRangeUser(0.5,background->GetMaximum());
-	pad2->Update();
-      } else {
-	background->SetMaximum(data->GetMaximum()*top_offset);
-	if(background->GetMaximum() > 1.) background->SetMinimum(0.001);
-       	background->GetYaxis()->SetRangeUser(0.5,data->GetMaximum());
-	pad2->Update();
-      }
+        if (normalize){
+            background->SetMaximum(0.21);
+            background->GetYaxis()->SetRangeUser(0.,0.21);
+        } else if(background->GetMaximum() > data->GetMaximum()) {    
+            background->SetMaximum(background->GetMaximum()*top_offset);
+            background->SetMinimum(0.7);
+            background->GetYaxis()->SetRangeUser(0.5,background->GetMaximum());
+            pad2->Update();
+        } else {
+            background->SetMaximum(data->GetMaximum()*top_offset);
+            if(background->GetMaximum() > 1.) background->SetMinimum(0.001);
+            background->GetYaxis()->SetRangeUser(0.5,data->GetMaximum());
+            pad2->Update();
+        }
     } else if(signal){
       if(background->GetMaximum() > signal->GetMaximum()) {    
 	background->SetMaximum(background->GetMaximum()*top_offset);
